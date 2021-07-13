@@ -21,6 +21,7 @@
   (setq x-select-enable-clipboard t)
 
   (setq-default shell-file-name "/bin/bash")
+  (setq-default explicit-shell-file-name "/bin/bash")
 
   (setq scroll-conservatively 100)
   (setq make-backup-files nil)
@@ -28,6 +29,11 @@
   (global-display-line-numbers-mode)
   (global-hl-line-mode t)
   (global-subword-mode 1)
+
+;; Rust
+;; (use-package rust-mode
+;;   :ensure t)
+;; (setq rust-format-on-save t)
 
 ;; Rainbow
 ;; rainbow-mode
@@ -53,6 +59,26 @@
 ;; Avy
   (use-package avy
     :ensure t)
+
+;; Neotree
+  (use-package neotree
+    :ensure t
+  )
+  (global-set-key (kbd "C-c t") 'neotree-toggle)
+  (defun neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+    (global-set-key (kbd "C-c p t") 'neotree-toggle)
+
 
 ;; Swiper
   (use-package swiper
@@ -87,6 +113,7 @@
     :ensure t
     :init
     (add-hook 'after-init-hook 'global-company-mode))
+
   (setq company-idle-delay 0)
   (setq company-minimum-prefix-length 1)
   (setq company-selection-wrap-around t)
@@ -129,14 +156,26 @@
   :ensure t)
 (add-hook 'python-mode-hook 'py-autopep8-enable-on-save)
 
+;; yasnippets
+(use-package yasnippet
+  :ensure t
+  :config
+  (setq yas-snippet-dirs '("~/.emacs.d/snippets"))
+  (yas-global-mode 1))
+
 ;; Custom functions
+
+(defun kill-current-buffer ()
+  (interactive)
+  (kill-buffer (current-buffer)))
+(global-set-key (kbd "C-x k") 'kill-current-buffer)
 
 ;; goto-char-right
   (defun goto-char-right ()
     (interactive)
     (call-interactively 'avy-goto-char)
     (right-char))
-  (global-set-key "\C-s" 'goto-char-right)
+  (global-set-key "\C-q" 'goto-char-right)
 
 ;; duplicate-line
       (defun duplicate-line (arg)
@@ -214,20 +253,37 @@
 
 ;; Custom shortcuts
 
+;; select word
+(defun select-word ()
+  (interactive)
+  (left-word)
+  (mark-word))
+
+  (global-set-key (kbd "C-c s w") 'select-word)
+
+;; kill region
+  (global-set-key (kbd "C-c k r") 'kill-region)
+
+;; terminal
+  (global-set-key (kbd "C-c m") 'ansi-term)
+
 ;; save-buffer
-  (global-set-key (kbd "C-r") (kbd "C-x C-s"))
+  (global-set-key (kbd "C-s") 'save-buffer)
 
 ;; duplicate-selection
-  (global-set-key (kbd "C-c d") (kbd "C-w C-y C-y"))
+  (global-set-key (kbd "C-c d") (kbd "C-w C-y"))
 
 ;; delete-line
-  (global-set-key (kbd "C-c k") (kbd "C-a C-k C-k"))
+  (global-set-key (kbd "C-c k l") (kbd "C-a C-k C-k"))
 
 ;; split-window-right-move
-  (global-set-key (kbd "C-c r") (kbd "C-x 3 C-x o"))
+  (global-set-key (kbd "C-c w r") (kbd "C-x 3 C-x o C-x b"))
+
+;; split-window-below-move
+  (global-set-key (kbd "C-c w b") (kbd "C-x 2 C-x o C-x b"))
 
 ;; org-mode-src
-  (global-set-key (kbd "C-c s") (kbd "C-c C-, s"))
+  ;; (global-set-key (kbd "C-c s r") (kbd "C-c C-, s"))
 
 ;; comment-line
   (global-set-key (kbd "C-/") 'comment-line)
@@ -239,10 +295,16 @@
   (global-set-key (kbd "C-\\") (kbd "C-m C-p C-e C-m"))
 
 ;; goto top of buffer
-  (global-set-key (kbd "C-c t") (kbd "M-<"))
+  (global-set-key (kbd "C-c g g") (kbd "M-<"))
 
-;; goto bottom of buffer
-  (global-set-key (kbd "C-c t") (kbd "M->"))
+;; goto end of buffer
+  (global-set-key (kbd "C-c g e") (kbd "M->"))
+
+;; copy region
+  (global-set-key (kbd "C-w") 'copy-region-as-kill)
+
+;; yas-expand
+  (global-set-key (kbd "C-c e") 'yas-expand)
 
 ;; Diminish
   (use-package diminish
@@ -262,12 +324,12 @@
  ;; If there is more than one, they won't work right.
  '(ansi-color-names-vector
    ["#21252B" "#E06C75" "#98C379" "#E5C07B" "#61AFEF" "#C678DD" "#56B6C2" "#ABB2BF"])
- '(custom-enabled-themes '(pastel))
+ '(custom-enabled-themes '(sanityinc-tomorrow-night))
  '(custom-safe-themes
-   '("b849dcd4fb2b31138b9425ef770122685aebf3e6ec52d5f8bf23e2d789ecee21" "98d38d05e930417ec59496f79cd78483351f66e0a692748bb6d706862882db71" "ec032f065a0375dfe88a3550a3f011a91953a396fa0c73e179738ba4d457e4be" "a2b87906151ab1e5afbbd4da315c2bf893d21b3122434b3b3a653b6f17fa9388" "ca54a00862a7f15809da458e0783834ece3264ea729af2b09dd61259fc6871ba" "3bd18d60380d8fb9378e822800836d6c67d6d3e4076088355f519930a6d29543" "8b7dfd39a16376088eefd19daf2e47a65370361726d50ee2dcfb398fca9c2bad" "824d07981667fd7d63488756b6d6a4036bae972d26337babf7b56df6e42f2bcd" "171d1ae90e46978eb9c342be6658d937a83aaa45997b1d7af7657546cae5985b" default))
+   '("06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "657d78a21e2f60615178d4f8f198371e0867a544554be15488bda716902e2a28" "f8e44524db6d0904b7e60b3abdd88bce0e8eae3064b803c4e099aa201837dfbc" "39cf01991ecf2d7793e2d4b13166b9b21b23229fdef6df25e341d97df3bb17d5" "d6d8c576780b878286d3b1cff6051d51f9115c2f466b857329d18739953d02f8" "b849dcd4fb2b31138b9425ef770122685aebf3e6ec52d5f8bf23e2d789ecee21" "98d38d05e930417ec59496f79cd78483351f66e0a692748bb6d706862882db71" "ec032f065a0375dfe88a3550a3f011a91953a396fa0c73e179738ba4d457e4be" "a2b87906151ab1e5afbbd4da315c2bf893d21b3122434b3b3a653b6f17fa9388" "ca54a00862a7f15809da458e0783834ece3264ea729af2b09dd61259fc6871ba" "3bd18d60380d8fb9378e822800836d6c67d6d3e4076088355f519930a6d29543" "8b7dfd39a16376088eefd19daf2e47a65370361726d50ee2dcfb398fca9c2bad" "824d07981667fd7d63488756b6d6a4036bae972d26337babf7b56df6e42f2bcd" "171d1ae90e46978eb9c342be6658d937a83aaa45997b1d7af7657546cae5985b" default))
  '(fci-rule-color "#3E4451")
  '(package-selected-packages
-   '(py-autopep8 dracula-theme multiple-cursors diminish mark-multiple projectile swiper company dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy atom-one-dark-theme))
+   '(rust-mode color-theme-sanityinc-tomorrow neotree yasnippet py-autopep8 multiple-cursors diminish mark-multiple projectile swiper company dashboard rainbow-delimiters which-key use-package rjsx-mode rainbow-mode prettier-js emmet-mode avy))
  '(tetris-x-colors
    [[229 192 123]
     [97 175 239]
@@ -281,4 +343,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :extend nil :stipple nil :background "#282C34" :foreground "#ABB2BF" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 115 :width normal :foundry "JB" :family "JetBrains Mono")))))
+ '(default ((t (:inherit nil :extend nil :stipple nil :background "#1c1f22" :foreground "#ABB2BF" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "JB" :family "Hack")))))

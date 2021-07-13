@@ -1,0 +1,7 @@
+# -*- mode: rsjx -*-
+# name: test
+# key: ?t
+# --
+this is a test snippet
+$1
+with $1 some text
