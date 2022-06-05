@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: twoprops
+# key: t
+# --
+$1={$1} set${1:$(capitalize-first-char yas-text)}={set${1:$(capitalize-first-char yas-text)}} $2

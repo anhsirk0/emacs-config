@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: importMaterialize
+# key: im
+# --
+import M from "materialize-css";

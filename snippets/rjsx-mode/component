@@ -1,10 +1,10 @@
 # -*- mode: rsjx -*-
 # name: component
-# key: .c
+# key: c
 # --
-const $1 = () => {
+const $1 = ($2) => {
   return (
-    $2
+    $3
   );
 };
 

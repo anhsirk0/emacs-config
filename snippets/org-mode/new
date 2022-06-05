@@ -1,0 +1,16 @@
+# -*- mode: snippet -*-
+# name: new
+# key: new
+# --
+* $1
+  * source code
+    #+BEGIN_SRC c
+$3
+    #+END_SRC
+      
+  * output
+    #+CAPTION: $2.c output (gcc 11.1.0)
+    #+ATTR_ORG: :width 100 :height 100    
+    #+ATTR_HTML: :width 50% :height 50%
+    [[./images/$2.png]]
+    * compiled with *gcc (11.1.0)*

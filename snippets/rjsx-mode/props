@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: props
-# key: .p
+# key: p
 # --
 $1={$1} $2

@@ -1,8 +1,8 @@
 # -*- mode: snippet -*-
 # name: function
-# key: .f
+# key: f
 # --
-const $1 = () => {
-  $2
+const $1 = ($2) => {
+  $3
 };
 

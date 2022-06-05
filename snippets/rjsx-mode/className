@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: class
+# key: cl
+# --
+className="$1"

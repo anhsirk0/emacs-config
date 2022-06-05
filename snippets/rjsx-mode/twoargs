@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: twoargs
+# key: a
+# --
+$1, set${1:$(capitalize-first-char yas-text)}
